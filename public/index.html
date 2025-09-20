@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Streaming MP4 Local</title>
+</head>
+<body>
+  <h1>🎬 Lista de Vídeos</h1>
+  <div id="video-list"></div>
+
+  <h2>📺 Player</h2>
+  <video id="player" controls autoplay style="width:80%;"></video>
+
+  <script>
+    const videoListDiv = document.getElementById("video-list");
+    const player = document.getElementById("player");
+
+    async function loadVideos() {
+      const res = await fetch("/videos");
+      const videos = await res.json();
+
+      videos.forEach(name => {
+        const btn = document.createElement("button");
+        btn.textContent = name;
+        btn.onclick = () => {
+          player.src = `/video/${name}`;
+          player.play();
+        };
+        videoListDiv.appendChild(btn);
+      });
+    }
+
+    loadVideos();
+  </script>
+</body>
+</html>
