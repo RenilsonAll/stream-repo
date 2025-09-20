@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Player de Vídeo</title>
+  <style>
+    body { font-family: Arial; margin: 20px; background:#f5f5f5; text-align:center; }
+    #player { width:80%; max-width:800px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.3); }
+    a { display:block; margin-top:20px; text-decoration:none; color:blue; }
+  </style>
+</head>
+<body>
+  <h1>📺 Player</h1>
+  <video id="player" controls autoplay></video>
+  <a href="index.html">⬅ Voltar para a lista</a>
+
+  <script>
+    const player = document.getElementById("player");
+
+    // Pega o vídeo da URL
+    const params = new URLSearchParams(window.location.search);
+    const videoName = params.get("video");
+
+    if(videoName) {
+      player.src = `/video/${videoName}`;
+    } else {
+      document.body.innerHTML = "<p>Vídeo não especificado</p><a href='index.html'>Voltar</a>";
+    }
+  </script>
+</body>
+</html>

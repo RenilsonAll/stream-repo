@@ -1,32 +1,36 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Streaming MP4 Local</title>
+  <meta charset="UTF-8">
+  <title>Lista de Vídeos</title>
+  <style>
+    body { font-family: Arial; margin: 20px; background:#f5f5f5; }
+    h1 { text-align:center; }
+    #video-list { display:flex; flex-wrap:wrap; gap:15px; justify-content:center; }
+    .video-card { background:white; width:200px; border-radius:8px; cursor:pointer; text-align:center; padding:10px; box-shadow:0 2px 8px rgba(0,0,0,0.2); }
+    .video-card:hover { transform:translateY(-5px); box-shadow:0 5px 15px rgba(0,0,0,0.3); }
+  </style>
 </head>
 <body>
   <h1>🎬 Lista de Vídeos</h1>
   <div id="video-list"></div>
 
-  <h2>📺 Player</h2>
-  <video id="player" controls autoplay style="width:80%;"></video>
-
   <script>
     const videoListDiv = document.getElementById("video-list");
-    const player = document.getElementById("player");
 
     async function loadVideos() {
       const res = await fetch("/videos");
       const videos = await res.json();
 
       videos.forEach(name => {
-        const btn = document.createElement("button");
-        btn.textContent = name;
-        btn.onclick = () => {
-          player.src = `/video/${name}`;
-          player.play();
+        const card = document.createElement("div");
+        card.className = "video-card";
+        card.textContent = name;
+        card.onclick = () => {
+          // redireciona para a tela de player passando o nome do vídeo
+          window.location.href = `/player.html?video=${encodeURIComponent(name)}`;
         };
-        videoListDiv.appendChild(btn);
+        videoListDiv.appendChild(card);
       });
     }
 
