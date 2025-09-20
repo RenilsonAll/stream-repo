@@ -7,6 +7,7 @@ const port = 8000;
 
 // Caminho absoluto para sua pasta de vídeos
 const videosDir = "C:/Filmes/Pool"; // Windows
+const audioBase = "C:/Filmes/Audio";
 
 // Servindo frontend
 app.use(express.static("public"));
@@ -56,6 +57,51 @@ app.get("/video/:name", (req, res) => {
     file.pipe(res);
   });
 });
+
+app.get("/audio/list", (req, res) => {
+  fs.readdir(audioBase, (err, files) => {
+    if (err) return res.status(500).send("Erro ao listar áudios");
+
+    // Filtra apenas arquivos .mp3
+    const mp3Files = files.filter(f => f.toLowerCase().endsWith(".mp3"));
+    res.json(mp3Files);
+  });
+});
+
+app.use("/audio", (req, res) => {
+  const audioRelPath = req.path.startsWith("/") ? req.path.slice(1) : req.path;
+  const audioPath = path.resolve(audioBase, audioRelPath); // caminho absoluto real
+  const baseResolved = path.resolve(audioBase);
+
+  if (!audioPath.startsWith(baseResolved)) return res.status(403).send("Acesso negado");
+
+  fs.stat(audioPath, (err, stats) => {
+    if (err) return res.status(404).send("Áudio não encontrado");
+
+    const range = req.headers.range;
+    if (!range) {
+      res.writeHead(200, { "Content-Length": stats.size, "Content-Type": "audio/mpeg" });
+      fs.createReadStream(audioPath).pipe(res);
+      return;
+    }
+
+    const parts = range.replace(/bytes=/, "").split("-");
+    const start = parseInt(parts[0], 10);
+    const end = parts[1] ? parseInt(parts[1], 10) : stats.size - 1;
+    const chunkSize = end - start + 1;
+
+    const file = fs.createReadStream(audioPath, { start, end });
+    const head = {
+      "Content-Range": `bytes ${start}-${end}/${stats.size}`,
+      "Accept-Ranges": "bytes",
+      "Content-Length": chunkSize,
+      "Content-Type": "audio/mpeg",
+    };
+    res.writeHead(206, head);
+    file.pipe(res);
+  });
+});
+
 
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
