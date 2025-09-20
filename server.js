@@ -6,7 +6,7 @@ const app = express();
 const port = 8000;
 
 // Caminho absoluto para sua pasta de vídeos
-const videosDir = "C:/Filmes/Pool"; // Windows
+const videosDir = "C:/Filmes/Y/L/BR"; // Windows
 const audioBase = "C:/Filmes/Audio";
 
 // Servindo frontend

@@ -1,6 +1,10 @@
 // Função para inicializar o player de áudio
 function initAudioPlayer(containerId) {
   const container = document.getElementById(containerId);
+  const wrapper = container.querySelector("#audioPlayerWrapper");
+  const toggleBtn = container.querySelector("#toggleBtn");
+
+
   const audioPlayer = container.querySelector("#audioPlayer");
   const audioListUl = container.querySelector("#audioList");
   const prevBtn = container.querySelector("#prevBtn");
@@ -8,6 +12,11 @@ function initAudioPlayer(containerId) {
 
   let audios = [];
   let currentAudioIndex = 0;
+
+  toggleBtn.onclick = () => {
+    wrapper.classList.toggle("collapsed");
+  };
+
 
   // Carrega lista de músicas do servidor
   fetch("/audio/list")
